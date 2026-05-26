@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f2d52">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Doorstep">
+<meta name="description" content="Request a doorstep at the Council of the EU">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Doorstep Request · Council of the EU</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0f2d52;
+    --navy-mid: #1a4470;
+    --navy-light: #245592;
+    --gold: #f0a500;
+    --gold-light: #ffd166;
+    --white: #ffffff;
+    --off-white: #f5f7fa;
+    --surface: #edf1f7;
+    --muted: #8a97aa;
+    --text: #1c2b3a;
+    --border: rgba(15,45,82,0.12);
+    --radius: 14px;
+    --radius-sm: 8px;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--navy);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--navy);
+    padding: calc(var(--safe-top) + 16px) 20px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-shrink: 0;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .eu-stars {
+    width: 36px;
+    height: 36px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+  }
+
+  .header-text h1 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.2;
+  }
+
+  .header-text p {
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    margin-top: 1px;
+    font-weight: 300;
+  }
+
+  .council-pill {
+    margin-left: auto;
+    background: rgba(255,255,255,0.1);
+    border: 0.5px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.85);
+    white-space: nowrap;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    background: var(--navy);
+    padding: 0 20px 16px;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.07);
+  }
+
+  .tab.active {
+    background: var(--gold);
+    color: var(--navy);
+  }
+
+  /* SCROLL CONTENT */
+  .content {
+    background: var(--off-white);
+    border-radius: 24px 24px 0 0;
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 24px 20px calc(var(--safe-bottom) + 100px);
+  }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* FORM SECTIONS */
+  .section {
+    margin-bottom: 24px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+    padding-left: 2px;
+  }
+
+  .field-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border);
+    overflow: hidden;
+  }
+
+  .field-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 0.5px solid var(--border);
+    gap: 12px;
+  }
+
+  .field-row:last-child { border-bottom: none; }
+
+  .field-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .field-icon.blue { background: #e6f0ff; }
+  .field-icon.gold { background: #fff5d9; }
+  .field-icon.green { background: #e3f5e8; }
+
+  .field-label {
+    font-size: 13px;
+    color: var(--muted);
+    min-width: 70px;
+    flex-shrink: 0;
+  }
+
+  .field-input, .field-select {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    background: transparent;
+    text-align: right;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .field-select { cursor: pointer; }
+
+  /* TIME SLOTS */
+  .slots-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .slot-btn {
+    background: var(--white);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 4px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .slot-btn:active { transform: scale(0.95); }
+
+  .slot-btn.taken {
+    background: var(--surface);
+    color: var(--muted);
+    text-decoration: line-through;
+    cursor: not-allowed;
+  }
+
+  .slot-btn.selected {
+    background: var(--navy);
+    color: var(--white);
+    border-color: var(--navy);
+  }
+
+  .slot-btn.yours {
+    background: var(--gold);
+    color: var(--navy);
+    border-color: var(--gold);
+  }
+
+  /* PRESS FORMAT */
+  .press-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .press-opt {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 8px 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .press-opt:active { transform: scale(0.97); }
+
+  .press-opt.selected {
+    border-color: var(--navy);
+    background: #f0f4fa;
+  }
+
+  .press-opt .press-icon {
+    font-size: 26px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .press-opt .press-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    display: block;
+    line-height: 1.3;
+  }
+
+  .press-opt .press-sub {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 3px;
+    display: block;
+    line-height: 1.3;
+  }
+
+  .press-opt.selected .press-name { color: var(--navy); }
+
+  /* NOTES */
+  .notes-field {
+    background: var(--white);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    width: 100%;
+    padding: 14px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    resize: none;
+    outline: none;
+    min-height: 80px;
+  }
+
+  .notes-field::placeholder { color: var(--muted); }
+
+  /* SUBMIT BUTTON */
+  .submit-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 20px calc(var(--safe-bottom) + 16px);
+    background: linear-gradient(to top, var(--off-white) 70%, transparent);
+    z-index: 50;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .submit-btn:active { transform: scale(0.98); background: var(--navy-mid); }
+  .submit-btn.success { background: #1a7d4a; }
+
+  /* OVERVIEW TAB */
+  .day-summary {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .day-summary-header {
+    background: var(--navy);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .day-summary-header span {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--white);
+  }
+
+  .day-count {
+    background: var(--gold);
+    color: var(--navy);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .request-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .request-row:last-child { border-bottom: none; }
+
+  .req-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--navy);
+    min-width: 42px;
+  }
+
+  .req-flag { font-size: 20px; }
+
+  .req-info { flex: 1; }
+
+  .req-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    display: block;
+  }
+
+  .req-press-label {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .req-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+  }
+
+  .badge-national { background: #e6f0ff; color: #1a4470; }
+  .badge-international { background: #e3f5e8; color: #1a6638; }
+  .badge-statement { background: #f5f0ff; color: #4a2d7a; }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--muted);
+  }
+
+  .empty-state .empty-icon { font-size: 40px; display: block; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    top: calc(var(--safe-top) + 100px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: var(--navy);
+    color: var(--white);
+    padding: 12px 20px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 999;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  }
+
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .legend {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="eu-stars">★</div>
+    <div class="header-text">
+      <h1>Doorstep Request</h1>
+      <p>Council of the European Union</p>
+    </div>
+    <div class="council-pill" id="council-pill">AGRI · 26 May</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('request', this)">New request</button>
+  <button class="tab" onclick="showTab('overview', this)">Overview</button>
+</div>
+
+<div class="content">
+
+  <!-- REQUEST PAGE -->
+  <div class="page active" id="page-request">
+
+    <div class="section">
+      <div class="section-label">Your details</div>
+      <div class="field-card">
+        <div class="field-row">
+          <div class="field-icon blue">👤</div>
+          <span class="field-label">Name</span>
+          <input class="field-input" id="input-name" type="text" placeholder="Full name" autocomplete="name">
+        </div>
+        <div class="field-row">
+          <div class="field-icon blue">🌍</div>
+          <span class="field-label">Country</span>
+          <select class="field-select" id="input-country">
+            <option value="">Select…</option>
+            <option value="AT">🇦🇹 Austria</option>
+            <option value="BE">🇧🇪 Belgium</option>
+            <option value="BG">🇧🇬 Bulgaria</option>
+            <option value="HR">🇭🇷 Croatia</option>
+            <option value="CY">🇨🇾 Cyprus</option>
+            <option value="CZ">🇨🇿 Czech Republic</option>
+            <option value="DK">🇩🇰 Denmark</option>
+            <option value="EE">🇪🇪 Estonia</option>
+            <option value="FI">🇫🇮 Finland</option>
+            <option value="FR">🇫🇷 France</option>
+            <option value="DE">🇩🇪 Germany</option>
+            <option value="GR">🇬🇷 Greece</option>
+            <option value="HU">🇭🇺 Hungary</option>
+            <option value="IE">🇮🇪 Ireland</option>
+            <option value="IT">🇮🇹 Italy</option>
+            <option value="LV">🇱🇻 Latvia</option>
+            <option value="LT">🇱🇹 Lithuania</option>
+            <option value="LU">🇱🇺 Luxembourg</option>
+            <option value="MT">🇲🇹 Malta</option>
+            <option value="NL">🇳🇱 Netherlands</option>
+            <option value="PL">🇵🇱 Poland</option>
+            <option value="PT">🇵🇹 Portugal</option>
+            <option value="RO">🇷🇴 Romania</option>
+            <option value="SK">🇸🇰 Slovakia</option>
+            <option value="SI">🇸🇮 Slovenia</option>
+            <option value="ES">🇪🇸 Spain</option>
+            <option value="SE">🇸🇪 Sweden</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="field-icon gold">🏛️</div>
+          <span class="field-label">Ministry</span>
+          <input class="field-input" id="input-ministry" type="text" placeholder="e.g. Agriculture">
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Preferred time slot</div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--navy)"></div> Selected</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#dde5f0"></div> Taken</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div> Your booking</div>
+      </div>
+      <div class="slots-grid" id="slots-grid"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Press format</div>
+      <div class="press-options">
+        <div class="press-opt selected" data-press="national" onclick="selectPress(this)">
+          <span class="press-icon">🏴</span>
+          <span class="press-name">National press</span>
+          <span class="press-sub">Home country media</span>
+        </div>
+        <div class="press-opt" data-press="international" onclick="selectPress(this)">
+          <span class="press-icon">🌐</span>
+          <span class="press-name">International</span>
+          <span class="press-sub">All accredited media</span>
+        </div>
+        <div class="press-opt" data-press="statement" onclick="selectPress(this)">
+          <span class="press-icon">📄</span>
+          <span class="press-name">Statement only</span>
+          <span class="press-sub">No questions</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Notes (optional)</div>
+      <textarea class="notes-field" id="input-notes" placeholder="Travelling with interpreter, specific location request…" rows="3"></textarea>
+    </div>
+
+  </div>
+
+  <!-- OVERVIEW PAGE -->
+  <div class="page" id="page-overview">
+
+    <div class="day-summary">
+      <div class="day-summary-header">
+        <span id="overview-title">AGRI Council · 26 May 2026</span>
+        <span class="day-count" id="overview-count">0</span>
+      </div>
+      <div id="overview-list"></div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- SUBMIT BUTTON (only on request tab) -->
+<div class="submit-bar" id="submit-bar">
+  <button class="submit-btn" id="submit-btn" onclick="submitRequest()">Submit doorstep request</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SLOTS = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00'];
+const TAKEN = ['09:00','11:00','14:30'];
+
+let selectedSlot = null;
+let selectedPress = 'national';
+let mySubmission = null;
+
+const requests = [
+  { name: 'K. Lindström', flag: '🇸🇪', time: '09:00', press: 'national', ministry: 'Agriculture' },
+  { name: 'G. Rossi', flag: '🇮🇹', time: '11:00', press: 'international', ministry: 'Agriculture' },
+  { name: 'A. Müller', flag: '🇩🇪', time: '14:30', press: 'statement', ministry: 'Food Safety' },
+];
+
+function buildSlots() {
+  const grid = document.getElementById('slots-grid');
+  grid.innerHTML = '';
+  SLOTS.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'slot-btn';
+    btn.textContent = s;
+    btn.dataset.time = s;
+    if (mySubmission && mySubmission.time === s) {
+      btn.classList.add('yours');
+    } else if (TAKEN.includes(s)) {
+      btn.classList.add('taken');
+    } else if (s === selectedSlot) {
+      btn.classList.add('selected');
+    }
+    btn.onclick = () => {
+      if (TAKEN.includes(s) || (mySubmission && mySubmission.time === s)) return;
+      selectedSlot = s;
+      buildSlots();
+    };
+    grid.appendChild(btn);
+  });
+}
+
+function selectPress(el) {
+  document.querySelectorAll('.press-opt').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPress = el.dataset.press;
+}
+
+function showTab(tab, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('page-' + tab).classList.add('active');
+  document.getElementById('submit-bar').style.display = tab === 'request' ? 'block' : 'none';
+  if (tab === 'overview') renderOverview();
+}
+
+function getFlag(countryVal) {
+  const opt = document.querySelector(`#input-country option[value="${countryVal}"]`);
+  if (!opt) return '🌍';
+  return opt.text.split(' ')[0];
+}
+
+function submitRequest() {
+  const name = document.getElementById('input-name').value.trim();
+  const country = document.getElementById('input-country').value;
+  const ministry = document.getElementById('input-ministry').value.trim();
+  if (!name) { showToast('Please enter your name'); return; }
+  if (!country) { showToast('Please select your country'); return; }
+  if (!selectedSlot) { showToast('Please choose a time slot'); return; }
+
+  mySubmission = { name, flag: getFlag(country), time: selectedSlot, press: selectedPress, ministry };
+  requests.push(mySubmission);
+  TAKEN.push(selectedSlot);
+
+  const btn = document.getElementById('submit-btn');
+  btn.textContent = '✓ Request submitted';
+  btn.classList.add('success');
+  setTimeout(() => {
+    btn.textContent = 'Submit doorstep request';
+    btn.classList.remove('success');
+  }, 3000);
+  showToast('Request submitted for ' + selectedSlot);
+  buildSlots();
+}
+
+function renderOverview() {
+  const list = document.getElementById('overview-list');
+  const count = document.getElementById('overview-count');
+  const sorted = [...requests].sort((a, b) => a.time.localeCompare(b.time));
+  count.textContent = sorted.length + ' request' + (sorted.length !== 1 ? 's' : '');
+
+  if (sorted.length === 0) {
+    list.innerHTML = '<div class="empty-state"><span class="empty-icon">📭</span><p>No requests submitted yet</p></div>';
+    return;
+  }
+
+  const badgeClass = { national: 'badge-national', international: 'badge-international', statement: 'badge-statement' };
+  const badgeLabel = { national: 'National', international: 'International', statement: 'Statement' };
+
+  list.innerHTML = sorted.map(r => `
+    <div class="request-row">
+      <span class="req-time">${r.time}</span>
+      <span class="req-flag">${r.flag}</span>
+      <div class="req-info">
+        <span class="req-name">${r.name}</span>
+        <span class="req-press-label">${r.ministry || '—'}</span>
+      </div>
+      <span class="req-badge ${badgeClass[r.press]}">${badgeLabel[r.press]}</span>
+    </div>
+  `).join('');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+buildSlots();
+renderOverview();
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
